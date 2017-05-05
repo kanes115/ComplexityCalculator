@@ -10,7 +10,7 @@ class TimeoutExceededException(Exception):
 
 def timeout():
     def real_dec(func):
-        def alarm_handle():
+        def alarm_handle(signo, info):
             raise TimeoutExceededException
 
         def timeouted_func(*args, **kwargs):
