@@ -24,4 +24,3 @@ def timeout():
             return res
         return timeouted_func
     return real_dec
-

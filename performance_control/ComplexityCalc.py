@@ -1,8 +1,13 @@
-from performance_control.ArgData import ArgData, ArgDataImpl
-from performance_control.PerformanceControllerException import PerformanceControllerException
-from performance_control.Logger import logger
-from performance_control.Timeout import timeout, TimeoutExceededException
-from timeit import Timer
+from performance_control.ArgData \
+    import ArgData
+from performance_control.PerformanceControllerException \
+    import PerformanceControllerException
+from performance_control.Logger \
+    import logger
+from performance_control.Timeout \
+    import timeout, TimeoutExceededException
+from timeit \
+    import Timer
 import math
 import numpy
 import copy
@@ -20,7 +25,9 @@ class ComplexityCalc:
                      'O(n^3)': lambda N: N * N * N}
 
     def __init__(self, func, arg, maxtime_sec=1000, repeat=1):
-        if not callable(func) or ArgData not in arg.__class__.__bases__ or maxtime_sec < 1 or repeat < 1:
+        if not callable(func) \
+                or ArgData not in arg.__class__.__bases__ \
+                or maxtime_sec < 1 or repeat < 1:
             raise PerformanceControllerException("Invalid arguments.")
 
         self.test_algorithm = func
@@ -28,10 +35,11 @@ class ComplexityCalc:
         self.timeout = maxtime_sec
         self.measures = dict()
         self.complexity = None
-        self.SIZES = [pow(self.SCALE, i) for i in self.TEST_RANGE]                   # must be sorted
+        self.SIZES = [pow(self.SCALE, i) for i in self.TEST_RANGE]
         self.repeat = repeat
         self.constance = 1
 
+    @logger('logs.log')
     def calculate_complexity(self):
         measures = self.get_measures()
         if not measures or len(measures) < 3:
@@ -48,6 +56,7 @@ class ComplexityCalc:
 
     # returns: dictionary N -> time
     @timeout()
+    @logger('logs.log')
     def get_measures(self):
         measures = dict()
         prev = 0            # previous size
@@ -61,7 +70,8 @@ class ComplexityCalc:
                     rawdata_copy = copy.deepcopy(self.test_arg.get_raw_data())
 
                     print('counting for ' + str(i))
-                    print(str(int(progress * 100 / len(self.TEST_RANGE) / self.repeat)) + '% progress...')
+                    print(str(int(progress * 100 / len(self.TEST_RANGE)
+                                  / self.repeat)) + '% progress...')
 
                     t = Timer(lambda: self.test_algorithm(rawdata_copy))
                     measures[i] = t.timeit(number=1)
@@ -84,7 +94,9 @@ class ComplexityCalc:
 
     def get_timeforecaster(self):
         if not self.complexity:
-            raise PerformanceControllerException("Forcaster is availible after calculating complexity.")
+            raise PerformanceControllerException(
+                "Forcaster is availible after calculating complexity."
+                )
 
         def forecast_time(n):
             compl = self.COMPLEXITITES[self.complexity]
@@ -94,11 +106,14 @@ class ComplexityCalc:
 
     def get_sizeforecaster(self):
         if not self.complexity:
-            raise PerformanceControllerException("Forcaster is availible after calculating complexity.")
+            raise PerformanceControllerException(
+                "Forcaster is availible after calculating complexity."
+                )
 
         def forecast_size(time):
 
-            def compl(n): return self.constance * self.COMPLEXITITES[self.complexity](n)
+            def compl(n):
+                return self.constance * self.COMPLEXITITES[self.complexity](n)
             start = 1
             end = sys.maxsize
             prev = -1
@@ -113,18 +128,3 @@ class ComplexityCalc:
 
             return end
         return forecast_size
-
-
-#
-# def main():
-#     a = ArgDataImpl([1,2,3,4])
-#     try:
-#         A = ComplexityCalc(sorted, a, 10)
-#         print(A.calculate_complexity())
-#         forcaster = A.get_sizeforecaster()
-#         print(forcaster(0.00001))
-#     except PerformanceControllerException as e:
-#         print(str(e))
-#         exit(-1)
-#
-# main()
