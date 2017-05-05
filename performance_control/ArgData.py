@@ -21,11 +21,11 @@ class ArgData:
         pass
 
 
-class ArgDataImpl(ArgData, list):
+class ArgDataListImpl(ArgData, list):
 
     def __init__(self, listt):
         self.listt = listt
-        super(ArgDataImpl, self).__init__(listt)
+        super(ArgDataListImpl, self).__init__(listt)
 
     def set_data(self, amount):
         self.listt = [random.randint(0, 1000) for _ in range(amount)]
