@@ -1,9 +1,8 @@
 import random
-from abc import ABC, abstractmethod
-from PerfControl.Logger import logger
+from abc import abstractmethod
 
 
-class ArgData(ABC):
+class ArgData:
 
     @abstractmethod
     def set_data(self, amount):
@@ -29,10 +28,10 @@ class ArgDataImpl(ArgData, list):
         super(ArgDataImpl, self).__init__(listt)
 
     def set_data(self, amount):
-        self.listt = [random.randint(0, 1000) for r in range(amount)]
+        self.listt = [random.randint(0, 1000) for _ in range(amount)]
 
     def inc_data(self, amount):
-        extra = [random.randint(0, 1000) for r in range(amount)]
+        extra = [random.randint(0, 1000) for _ in range(amount)]
         self.listt += extra
 
     def get_data_size(self):

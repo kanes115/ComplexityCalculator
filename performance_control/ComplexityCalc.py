@@ -1,19 +1,20 @@
-from PerfControl.ArgData import ArgData, ArgDataImpl
-from PerfControl.PerformanceControllerException import PerformanceControllerException
-from PerfControl.Logger import logger
-from PerfControl.Timeout import timeout, TimeoutExceededException
+from performance_control.ArgData import ArgData, ArgDataImpl
+from performance_control.PerformanceControllerException import PerformanceControllerException
+from performance_control.Logger import logger
+from performance_control.Timeout import timeout, TimeoutExceededException
 from timeit import Timer
 import math
 import numpy
 import copy
+import sys
 
 
 class ComplexityCalc:
 
     SCALE = 2
     TEST_RANGE = range(9, 18)
-    COMPLEXITITES = {'O(logn)': lambda N: math.log2(N),
-                     'O(nlogn)': lambda N: N * math.log2(N),
+    COMPLEXITITES = {'O(logn)': lambda N: math.log(N, 2),
+                     'O(nlogn)': lambda N: N * math.log(N, 2),
                      'O(n)': lambda N: N,
                      'O(n^2)': lambda N: N * N,
                      'O(n^3)': lambda N: N * N * N}
@@ -81,7 +82,7 @@ class ComplexityCalc:
             res[name] = (numpy.std(vals) / numpy.mean(vals), numpy.mean(vals))
         return res
 
-    def get_forecaster(self):
+    def get_timeforecaster(self):
         if not self.complexity:
             raise PerformanceControllerException("Forcaster is availible after calculating complexity.")
 
@@ -91,17 +92,39 @@ class ComplexityCalc:
             return res
         return forecast_time
 
+    def get_sizeforecaster(self):
+        if not self.complexity:
+            raise PerformanceControllerException("Forcaster is availible after calculating complexity.")
+
+        def forecast_size(time):
+
+            def compl(n): return self.constance * self.COMPLEXITITES[self.complexity](n)
+            start = 1
+            end = sys.maxsize
+            prev = -1
+            mid = 0
+            while prev != mid:
+                prev = mid
+                mid = int((end + start) / 2)
+                if compl(mid) < time:
+                    start = mid
+                else:
+                    end = mid
+
+            return end
+        return forecast_size
 
 
-def main():
-    a = ArgDataImpl([1,2,3,4])
-    try:
-        A = ComplexityCalc(quicksort, a, 10)
-        print(A.calculate_complexity())
-        forcaster = A.get_forecaster()
-        print(forcaster(2048))
-    except PerformanceControllerException as e:
-        print(str(e))
-        exit(-1)
-
-main()
+#
+# def main():
+#     a = ArgDataImpl([1,2,3,4])
+#     try:
+#         A = ComplexityCalc(sorted, a, 10)
+#         print(A.calculate_complexity())
+#         forcaster = A.get_sizeforecaster()
+#         print(forcaster(0.00001))
+#     except PerformanceControllerException as e:
+#         print(str(e))
+#         exit(-1)
+#
+# main()
