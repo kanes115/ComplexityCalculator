@@ -3,6 +3,11 @@ import sys
 
 
 def logger(filename):
+    '''
+    Decorator that loggs every entry to a function,
+    so its name, params.
+    :param filename: output of a log
+    '''
     def real_dec(function):
         def new_func(*args, **kwargs):
 

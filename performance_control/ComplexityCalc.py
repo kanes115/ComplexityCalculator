@@ -15,6 +15,30 @@ import sys
 
 
 class ComplexityCalc:
+    '''
+    This is a class that takes care of calculating
+    time complexity of algorithm given by a function
+    passed to constructor and its input data.
+    Input data must implement ArgData interface
+    (inherit from it in fact). If confused, take a look
+    at example of implementation of input data provided
+    in ArgData.py file (for list input).
+
+    It works like this (NlogN example):
+
+    t(N) = c * N*log(N), c is a constance
+
+    we divide both sides by Nlog(N)
+
+    t(N) / NlogN = c
+
+    We get c for each measure. If the complexity is
+    NlogN, all the c should be almost the same,
+    so using count_errors() we calculate variance
+    of these consts for each complexity (among all measures)
+    and check for which complexity we get the smalles variance.
+    This our complexity!
+    '''
 
     SCALE = 2
     TEST_RANGE = range(9, 18)
@@ -41,6 +65,10 @@ class ComplexityCalc:
 
     @logger('logs.log')
     def calculate_complexity(self):
+        '''
+        Does the main job.
+        :return: string describing complexity that we got
+        '''
         measures = self.get_measures()
         if not measures or len(measures) < 3:
             print('Not enough information...')
@@ -54,12 +82,18 @@ class ComplexityCalc:
         self.constance = minc[2]
         return minc[0]
 
-    # returns: dictionary N -> time
     @timeout()
     @logger('logs.log')
     def get_measures(self):
+        '''
+        It gets the measures of time for each N from
+        range TEST_RANGE. It uses @timeout to ensure
+        it does not take more time that self.timeout.
+
+        :return: dictionary N -> time
+        '''
         measures = dict()
-        prev = 0            # previous size
+        prev = 0
         self.test_arg.set_data(0)
         progress = 1
         try:
@@ -82,8 +116,12 @@ class ComplexityCalc:
             self.measures = measures
             return measures
 
-    # returns: dictionary COMPLEXITY -> wariancja
     def count_errors(self, measures):
+        '''
+        For each complexity it computes errors (variance).
+        :param measures: measures returned by get_measures()
+        :return: COMPLEXITY -> variance
+        '''
         res = dict()
         for name, f in self.COMPLEXITITES.items():
             vals = []
@@ -93,6 +131,10 @@ class ComplexityCalc:
         return res
 
     def get_timeforecaster(self):
+        '''
+        :return: a function that lets you forecast time it will take algorithm
+        to calculate a problem of size N (which is passed to this function)
+        '''
         if not self.complexity:
             raise PerformanceControllerException(
                 "Forcaster is availible after calculating complexity."
@@ -105,6 +147,10 @@ class ComplexityCalc:
         return forecast_time
 
     def get_sizeforecaster(self):
+        '''
+        :return: a function that lets you forecast biggest size algorithm
+        will compute under a given time (which is passed to the function).
+        '''
         if not self.complexity:
             raise PerformanceControllerException(
                 "Forcaster is availible after calculating complexity."

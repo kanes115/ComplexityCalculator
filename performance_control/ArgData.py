@@ -3,6 +3,14 @@ from abc import abstractmethod
 
 
 class ArgData:
+    '''
+    Abstract class that a class has to inherit from
+    in order to be able to be passed to ComplexityCalc
+    as input data. It provides methods to increase
+    the input data size (by random data, preferably),
+    set data size for a particular size, get raw data
+    so that it can be used in algorithm.
+    '''
 
     @abstractmethod
     def set_data(self, amount):
@@ -22,6 +30,9 @@ class ArgData:
 
 
 class ArgDataListImpl(ArgData, list):
+    '''
+    Example of implementation of ArgData
+    '''
 
     def __init__(self, listt):
         self.listt = listt
