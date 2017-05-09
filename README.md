@@ -1,50 +1,25 @@
-# Programowanie w jezyku Python 2016/2017 zadanie 2
+# Complexity Calculator
+This is a module that takes care of calculating time complexity of algorithm given by a function passed to constructor of ComplexityCalc class and its input data. Input data must implement ArgData interface (inherit from it in fact). If confused, take a look at example of implementation of input data provided in ArgData.py file (for list input).
 
-W celu oszacowania czasu wykonania programu kuszące jest czasem zalozyc liniowa złożoność obliczeniowa.
-Czas sortowania możemy oszacować monotonicznej listy na 17.9 us dla 1000 elementów:
+## Example of working
+It works like this (NlogN example):
+    
+    t(N) = c * N*log(N), c is a constance, we divide both sides by Nlog(N)
+    
+    t(N) / NlogN = c
+    
+We get c for each measure. If the complexity is NlogN, all the c should be almost the same, so using count_errors() we calculate variance of these consts for each complexity (among all measures) and check for which complexity we get the smalles variance. This our complexity!
 
-```bash
-python -m timeit -s "s = list(range(1000))" "sorted(s)"
-100000 loops, best of 3: 17.9 usec per loop
-```
+## Usage
+1) Implement input data class which will contain input data to your tested function. It must provide for example increasing the data size (adding some random data) or setting size of a problem for a certain amount.
+2) Create ComplexityCalc object, pass tested function and input data to its constructor.
+3) Use ComplexityCalc.calculate_complexity() method to get complexity as a string.
+4) Additionally you can get functions allowing you to forecast the time it will take tested function to procces input data of size N and max size input data can have so that tested function will end up calculating before a specified time. Use ComplexityCalc.get_timeforecaster() and ComplexityCalc.get_sizeforecaster() respectively.
 
+## Installation
+Type in a command line
+`pip3 install performance_control`
 
-Próbując uogólnić ten wynik na listę składająca sie z 10^6 elementów spodziewalibyśmy się wyniku okolo 18 ms. Dokonując pomiaru otrzymujemy jednak czas o około 35% większy: 
-
-```bash
-python -m timeit -s "s = list(range(1000000))" "sorted(s)"
-10 loops, best of 3: 24.5 msec per loop
-```
-
-
-Przygotuj program do automatycznego wyznaczania złożoności obliczeniowej.
-
-Program ten powinien otrzymywać na wejściu:
- -  Inicjalizacje odpowiednich struktur
- - Funkcje lub klase odpowiedzialna za wykonanie algorytmu
- - Kod odpowiedzialny za posprzątanie
-
-Jako wynik powinniśmy otrzymać:
- - Informacje o przypuszczalnej klasie złożoności obliczeniowej ( O(n), O(n log(n)), O(n^2))
- - Funkcje umożliwiające przewidywanie jaki będzie czas wykonania programu dla zadanej wielkości problemu
- - Funkcję umożliwiającą przewidywanie jaki jest maksymalny rozmiar problemu obliczeniowego dla zadanego czasu
-
-Wyznaczanie złożoności niektórych algorytmów może trwać bardzo długo. Aby umożliwić wykonanie programu w rozsądnym czasie program powinien posiadać ograniczenie w postaci parametru “timeout” ustawionego domyślnie na 30 sekund. W przypadku nie otrzymania ostatecznego wyniku w założonym czasie program powinien zwrócić wynik cząstkowy (np “złożoność gorsza niż O(n)”).
-
-Program powinien dać się zainstalować jako pakiet pip bezpośrednio z repozytorium (np używając komendy 
-`pip install git+https://github.com/AGHPythonCourse2017/zad01-grzanka.git`)
-
-Program powinien wykorzystywać następujące elementy:
- - Logger
- - dekoratory
- - własne wyjątki
-
-Program powinien przejść test flake8 (zgodność z PEP8).
-
-Za wykonania zadania mozna zdobyc maksymalnie 0.9 punktu.
-
-Dodatkowo trzeba wykonać trzy recenzje rozwiązań zadania nr 1 i umieścić w repozytorium w pliku review.txt odnośniki do odpowiednich “Pull request”. Ten fragment zadania umożliwia zdobycie maksymalnie 0.1 punktu.
-
-Tresc zadania w Google Drive: https://goo.gl/r87sPE
-
-Termin oddania zadania: 8 maja 2017, 20:00
+visit our pypi page:
+[link](https://pypi.python.org/pypi?:action=display&name=performance_control&version=0.2)
+    
